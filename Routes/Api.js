@@ -12,6 +12,8 @@ An empty date parameter should return the current time in a JSON object with a u
 */
 const {Router} = require('express');
 const router = Router();
+const moment = require('moment');
+
 const showDate = (dateStr,res)=>{
   const d = new Date(dateStr)
   return res.json({
@@ -22,19 +24,11 @@ const showDate = (dateStr,res)=>{
 router.get('/timestamp/:date',(req,res)=>{
   if(req.params.date){
     const date = req.params.date;
-    const dateString = isNaN(date)?date : Number(date)
-    console.log(date)
-    if((new Date(date) == 'Invalid Date')){
-      res.json({error:'Invalid Date'})
+    if(moment(date).isValid()){
+      showDate(date,res)
     }
-    else{
-    showDate(date,res)
-    }
-  }
-  else{
-    showDate(new Date(),res)
-  }
-  
-  
-})
+    res.json({error:'Invalid Date'})
+}
+  showDate('',res)
+});
 module.exports= router;
