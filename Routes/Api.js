@@ -14,21 +14,23 @@ const {Router} = require('express');
 const router = Router();
 const moment = require('moment');
 
-const showDate = (dateStr,res)=>{
-  const d = new Date(dateStr)
-  return res.json({
-    "unix":Date.parse(d),
-    "utc":d.toUTCString()
-  })
-}
+router.get('/timestamp/',(req,res)=>{
+  const result = {
+    unix:new Date().getTime(),
+    utc:new Date().toUTCString()
+  }
+  res.json(result)
+})
 router.get('/timestamp/:date',(req,res)=>{
-  if(req.params.date){
-    const date = req.params.date;
-    if(moment(date).isValid()){
-      showDate(date,res)
-    }
-    res.json({error:'Invalid Date'})
-}
-  showDate('',res)
+  date_string = req.params.date
+  const timestamp = date_string.includes('-')?date_string:+date_string
+  if(moment(timestamp).isValid()){
+    res.json({
+      unix:new Date(timestamp).getTime(),
+      utc:new Date(timestamp).toUTCString()
+    })
+  }
+  res.json({error:'Invalid Date'})
+    
 });
 module.exports= router;
